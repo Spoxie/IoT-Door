@@ -87,7 +87,9 @@ if(millis() - lastMillis > 10000)
           afficheur.setCursor(0,20); // cursor is in x=0 and y=15 
           afficheur.setTextSize(2); 
           afficheur.print("Waiting"); // display text   
-          } 
+          }
+        //Publishes the values to IBM.
+       MQTTc.publish("iot-2/evt/SensorsFromLab/fmt/json", "{\"name\":\"Analog input value\",\"bpm\":" + String(analogRead(1))+"}");
        lastMillis = millis();
      }
 
