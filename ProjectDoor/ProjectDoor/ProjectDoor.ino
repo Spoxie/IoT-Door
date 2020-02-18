@@ -21,16 +21,17 @@ const int sck = 9;
 const int mosi = 8; 
 const int cs = A3; 
 const int res = A2; 
-const int dc = A1; 
+const int dc = A1;
+bool onAndOff = false; 
 
 Adafruit_SSD1331 afficheur = Adafruit_SSD1331(cs, dc, mosi, sck, res); //création of object 
 
 // WLAN. PSA; When trying to get this to work on your network, change the SSID AND PASS!!!!
-char ssid[] = "Machine's Android"; //  your network SSID (name)
-char pass[] = "chogathop";    // your network password (use for WPA)
+char ssid[] = "HAMKvisitor"; //  your network SSID (name)
+char pass[] = "hamkvisitor";    // your network password (use for WPA)
 
 //IBM Watson definitions for the Arduino.
-//char *client_id = "d:<your Organization ID>:<your Device Type>:<your Device ID>"; 
+//char *client_id = "d:<your Organization ID>:<your Device Type>:<your Device ID> 
 char *client_id = "d:pm8jn8:Arduino_MKR1000:AMKR1000";
 char *user_id = "use-token-auth";   // telling that authentication will be done with token
 char *authToken = "HomoSapiens3000"; // Your IBM Watson Authentication Token
@@ -48,7 +49,7 @@ unsigned long lastMillis = 0;
 
 void setup() 
 { 
-  afficheur.begin(); // initialization of display objcet 
+  afficheur.begin(); // initialization of display objcet ;
   pinMode (1, INPUT); //EXCUSE ME, WHat is this???? 
   Serial.begin(9600); //Initilization of the serial monitor. Shows if you are connected to the IBM Cloud
   WiFi.begin(ssid, pass);
@@ -71,26 +72,32 @@ MQTTc.loop();
 if(millis() - lastMillis > 10000) 
      {
         Serial.println(digitalRead(1));
-        if (digitalRead(1) == 0) 
-          { 
-          afficheur.fillScreen(BLACK); // background screen in black 
-          afficheur.setTextColor(SKY); // color of text in cyan 
-          afficheur.setCursor(0,20); // cursor is in x=0 and y=15 
-          afficheur.setTextSize(4); 
-          afficheur.print("MAIL"); // display text   
-          } 
-    
-          else 
-          { 
-          afficheur.fillScreen(BLACK); // background screen in black 
-          afficheur.setTextColor(SKY); // color of text in cyan 
-          afficheur.setCursor(0,20); // cursor is in x=0 and y=15 
-          afficheur.setTextSize(2); 
-          afficheur.print("Waiting"); // display text   
-          }
+         if(digitalRead(1) == 1 && onAndOff == false){
+              afficheur.fillScreen(BLACK); // background screen in black 
+              afficheur.setTextColor(SKY); // color of text in cyan 
+              afficheur.setCursor(0,20); // cursor is in x=0 and y=15 
+              afficheur.setTextSize(2); 
+              afficheur.print("Waiting"); // display text
+              onAndOff = true;
+              delay(1000);
+            }   
+          if (digitalRead(1) == 0) 
+            { 
+              afficheur.fillScreen(BLACK); // background screen in black 
+              afficheur.setTextColor(SKY); // color of text in cyan 
+              afficheur.setCursor(0,20); // cursor is in x=0 and y=15 
+              afficheur.setTextSize(2);
+              afficheur.print("MAIL"); // display text
+              
+              delay(1000);
+             } 
+
+            
+            
+          
         //Publishes the values to IBM.
-       MQTTc.publish("iot-2/evt/SensorsFromLab/fmt/json", "{\"name\":\"Analog input value\",\"bpm\":" + String(analogRead(1))+"}");
-       lastMillis = millis();
+       MQTTc.publish("iot-2/evt/SensorsFromLab/fmt/json", "{\"name\":\"novittuoikeesti input value\",\"bpm\":" + String(digitalRead(1))+"}");
+       
      }
 
 }
@@ -115,7 +122,8 @@ void connect()
 }
 
 
-void printWiFiStatus() {
+void printWiFiStatus() 
+{
   // print the SSID of the network you're attached to:
   Serial.print("SSID: ");
   Serial.println(WiFi.SSID());
@@ -124,9 +132,4 @@ void printWiFiStatus() {
   IPAddress ip = WiFi.localIP();
   Serial.print("IP Address: ");
   Serial.println(ip);
-  
-
-  
-
-
-} 
+}
