@@ -87,10 +87,13 @@ if(millis() - lastMillis > 10000)
               afficheur.setTextColor(SKY); // color of text in cyan 
               afficheur.setCursor(0,20); // cursor is in x=0 and y=15 
               afficheur.setTextSize(2);
+              
               afficheur.print("MAIL"); // display text
               
               delay(1000);
-             } 
+              } 
+
+              lastMillis = millis();
 
             
             
